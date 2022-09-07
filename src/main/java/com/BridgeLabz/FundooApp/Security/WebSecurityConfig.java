@@ -16,13 +16,12 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    private  UserDetailsService userDetailsService;
-
+    private UserDetailsService userDetailsService;
 
 
     @Bean
@@ -37,24 +36,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().disable();
         http.csrf().disable();
 
-        http.authorizeRequests()
-                .antMatchers("/users").permitAll()
-                .and()
-                .formLogin()
-                .permitAll()
-                .and()
-                .logout().permitAll();
+        http.authorizeRequests().antMatchers("/users").permitAll()
+                .and().formLogin().permitAll().and().logout().permitAll();
 
     }
-
-
 
 
 }

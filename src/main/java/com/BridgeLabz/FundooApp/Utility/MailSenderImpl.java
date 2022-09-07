@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.internet.MimeMessage;
 
 @Service
-public class MailSenderImpl implements IMailSender{
+public class MailSenderImpl implements IMailSender {
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -23,17 +23,16 @@ public class MailSenderImpl implements IMailSender{
             messageHelper.setFrom(from);
             messageHelper.setTo(to);
             messageHelper.setSubject("mail from admin");
-            messageHelper.setText(messageBuilder(to),true);
+            messageHelper.setText(messageBuilder(to), true);
             javaMailSender.send(message);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
     }
-    private String messageBuilder(String email)
-    {
-        return "<html><head>Hi User,</head><body> Password Request Successfull for Email "+email+" </body></html>";
+
+    private String messageBuilder(String email) {
+        return "<html><head>Hi User,</head><body> Password Request Successfull for Email " + email + " </body></html>";
     }
 
 
@@ -45,11 +44,10 @@ public class MailSenderImpl implements IMailSender{
             messageHelper.setTo(to);
             messageHelper.setSubject("mail from admin");
             messageHelper.setText("<html><body>" +
-                    "<link>"+" http://localhost:8080/user/confirm-email?token="+token+"</link></body></html>",true);
+                    "<link>" + " http://localhost:8080/user/confirm-email?token=" + token + "</link></body></html>", true);
             javaMailSender.send(message);
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -62,8 +60,8 @@ public class MailSenderImpl implements IMailSender{
         messageHelper.setFrom(from);
         messageHelper.setTo(to);
         messageHelper.setSubject("mail from admin");
-        messageHelper.setText("<html><head>Hi User,</head><body> Your password for the "+to+" is "
-                + password+"</body></html>",true);
+        messageHelper.setText("<html><head>Hi User,</head><body> Your password for the " + to + " is "
+                + password + "</body></html>", true);
         javaMailSender.send(message);
 
     }

@@ -16,10 +16,11 @@ public class CustomUserDeatilsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> admin=userRepository.findByEmail(email);
+        Optional<User> admin = userRepository.findByEmail(email);
         return admin.map(CustomUserDeatils::new).
-                orElseThrow( ()-> new UsernameNotFoundException(email+" Email not registered"));
+                orElseThrow(() -> new UsernameNotFoundException(email + " Email not registered"));
     }
 }

@@ -45,71 +45,70 @@ public class UserServiceImpl implements IUSerService {
     private TokenRepository tokenRepository;
 
     @Override
-    public Response registration(RegisterDTO registerDTO)  {
-        User user=modelMapper.map(registerDTO,User.class);
+    public Response registration(RegisterDTO registerDTO) {
+        User user = modelMapper.map(registerDTO, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        tokenRepository.save(new ConfirmationToken(String.valueOf(UUID.randomUUID()),user));
-        User save =userRepository.save(user);
-        mailSender.confirmMail(From,registerDTO.getEmail(),tokenRepository.getById(save.getId()).getToken());
-        /*
+        tokenRepository.save(new ConfirmationToken(String.valueOf(UUID.randomUUID()), user));
+        User save = userRepository.save(user);
+        mailSender.confirmMail(From, registerDTO.getEmail(), tokenRepository.getById(save.getId()).getToken());
+       /*
         String token= utiljwt.createToken(save.getEmail());
         mailUtility.sendMail(save.getEmail(),token)
          */
 
-        return Utility.getResponse("User registered sucessfullly",registerDTO);
+
+        return Utility.getResponse("User registered sucessfullly", registerDTO);
     }
 
     @Override
     @SneakyThrows
     public Response login(LoginDTO loginDTO) {
-       if(userRepository.findByEmail(loginDTO.getEmail()).isPresent()){
-           if(userRepository.findByPassword(loginDTO.getPassword()).isPresent()){
-               System.out.println("login Successful");
-           }
-           else {
-               throw new Exception("Invalid password");
-           }
+        if (userRepository.findByEmail(loginDTO.getEmail()).isPresent()) {
+            if (userRepository.findByPassword(loginDTO.getPassword()).isPresent()) {
+                System.out.println("login Successful");
+            } else {
+                throw new Exception("Invalid password");
+            }
 
-       }
-        return Utility.getResponse("Login Successful",HttpStatus.OK);
+        }
+        return Utility.getResponse("Login Successful", HttpStatus.OK);
 
     }
 
-    public Response resetpassword(RestPasswordDTO restPasswordDTO, int id) throws Exception {
+    @Override
+    @SneakyThrows
+    public Response resetpassword(RestPasswordDTO restPasswordDTO, int id) {
 
-       if(userRepository.findById(id).isPresent()){
+        if (userRepository.findById(id).isPresent()) {
 
-           userRepository.findById(id).get().getPassword();
-           if((userRepository.findById(id)
-                   .get()
-                   .getPassword()
-           ).equals(restPasswordDTO.getOldPassword())){
-               userRepository.findById(id).get().setPassword(restPasswordDTO.getNewPasswrod());
-               mailSender.sendEmail(From,userRepository.findById(id).get().getEmail());
-           }
-           else {
-               throw new Exception("Incorrect password ");
-           }
+            userRepository.findById(id).get().getPassword();
+            if ((userRepository.findById(id)
+                    .get()
+                    .getPassword()
+            ).equals(restPasswordDTO.getOldPassword())) {
+                userRepository.findById(id).get().setPassword(restPasswordDTO.getNewPasswrod());
+                mailSender.sendEmail(From, userRepository.findById(id).get().getEmail());
+            } else {
+                throw new Exception("Incorrect password ");
+            }
 
-       }
-       else {
-           throw new Exception("ID not found");
-       }
-       return Utility.getResponse("password reset successful", HttpStatus.OK);
+        } else {
+            throw new Exception("ID not found");
+        }
+        return Utility.getResponse("password reset successful", HttpStatus.OK);
 
     }
 
     @Override
     @SneakyThrows
     public Response forgotPassword(int id) {
-        User user=userRepository.findById(id).get();
-        if(userRepository.findById(id).isPresent()){
-            mailSender.forgotPasswordMail(From,user.getEmail(),user.getPassword());
-        }
-        else {
+        User user = userRepository.findById(id).get();
+        if (userRepository.findById(id).isPresent()) {
+            mailSender.forgotPasswordMail(From, user.getEmail(), user.getPassword());
+        } else {
             throw new Exception("user id not found");
         }
-        return Utility.getResponse("Password sent to user mail",HttpStatus.OK);
+        return Utility.getResponse("Password sent to user mail", HttpStatus.OK);
 
     }
 
@@ -117,8 +116,7 @@ public class UserServiceImpl implements IUSerService {
         return userRepository.FindAllUSer();
     }
 
-    public String confirmEmail(String confirmationToken)
-    {
+    public String confirmEmail(String confirmationToken) {
         userRepository.getById(tokenRepository.findByToken(confirmationToken).get().getId()).setVerified(true);
         userRepository.save(userRepository.getById(tokenRepository.findByToken(confirmationToken).get().getId()));
         return "Verified Successfully";

@@ -18,12 +18,11 @@ public class ConfirmationToken {
     @Column(name = "Token")
     private String token;
 
-    @OneToOne(targetEntity = User.class , cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_token_id")
+    @OneToOne(targetEntity = User.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_USer_id")
     private User users;
 
-    public ConfirmationToken(String token , User users)
-    {
+    public ConfirmationToken(String token, User users) {
         this.token = token;
         this.users = users;
     }

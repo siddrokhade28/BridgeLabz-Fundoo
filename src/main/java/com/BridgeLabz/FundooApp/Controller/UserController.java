@@ -8,7 +8,6 @@ import com.BridgeLabz.FundooApp.Service.IUSerService;
 import com.BridgeLabz.FundooApp.Service.UserServiceImpl;
 import com.BridgeLabz.FundooApp.Utility.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,46 +27,40 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
 
-
     @GetMapping("/homepage")
-    public  String viewHomepage(){
+    public String viewHomepage() {
         return "welcome";
     }
 
     @PostMapping("/register")
-    public Response newSignUp(@RequestBody RegisterDTO registerDTO){
-       return iuSerService.registration(registerDTO);
+    public Response newSignUp(@RequestBody RegisterDTO registerDTO) {
+        return iuSerService.registration(registerDTO);
     }
+
     @GetMapping("/confirm-email")
-    public String confirmUser(@RequestParam("token")String confirmationToken)
-    {
+    public String confirmUser(@RequestParam("token") String confirmationToken) {
         return userService.confirmEmail(confirmationToken);
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody LoginDTO loginDTO){
+    public Response login(@RequestBody LoginDTO loginDTO) {
         return userService.login(loginDTO);
     }
 
     @PostMapping("/resetPassword/{id}")
     public Response resetPassword(@RequestBody RestPasswordDTO request, @PathVariable int id) throws Exception {
-        return iuSerService.resetpassword(request,id);
+        return iuSerService.resetpassword(request, id);
     }
 
     @PostMapping("/forgot-password/{id}")
-    public Response forgotPassword(@PathVariable int id) throws Exception
-    {
+    public Response forgotPassword(@PathVariable int id) throws Exception {
         return userService.forgotPassword(id);
     }
 
     @GetMapping("/fetchAllUSer")
-    public List<AllUsers> getAll(){
+    public List<AllUsers> getAll() {
         return iuSerService.getAllUser();
     }
-
-
-
-
 
 
 }

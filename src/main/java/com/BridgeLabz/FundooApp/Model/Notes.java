@@ -14,8 +14,8 @@ public class Notes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Note_ID")
-    private  int note_id;
-    @Column(name = "Notes",length = 8000)
+    private int note_id;
+    @Column(name = "Notes", length = 8000)
     private String notes;
 
 }
