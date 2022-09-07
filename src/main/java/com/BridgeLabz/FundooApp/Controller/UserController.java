@@ -1,20 +1,33 @@
 package com.BridgeLabz.FundooApp.Controller;
 
-import com.BridgeLabz.FundooApp.DTO.Login;
-import com.BridgeLabz.FundooApp.DTO.RestPassword;
-import com.BridgeLabz.FundooApp.Model.User;
-import com.BridgeLabz.FundooApp.Service.UserService;
+import com.BridgeLabz.FundooApp.DTO.AllUsers;
+import com.BridgeLabz.FundooApp.DTO.LoginDTO;
+import com.BridgeLabz.FundooApp.DTO.RegisterDTO;
+import com.BridgeLabz.FundooApp.DTO.RestPasswordDTO;
+import com.BridgeLabz.FundooApp.Service.IUSerService;
+import com.BridgeLabz.FundooApp.Service.UserServiceImpl;
+import com.BridgeLabz.FundooApp.Utility.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/fundoo")
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private IUSerService iuSerService;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     @GetMapping("/homepage")
     public  String viewHomepage(){
@@ -22,33 +35,36 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String newSignUp(@RequestBody User user){
-        userService.signUp(user);
-        return "sign up sucessfull";
+    public Response newSignUp(@RequestBody RegisterDTO registerDTO){
+       return iuSerService.registration(registerDTO);
+    }
+    @GetMapping("/confirm-email")
+    public String confirmUser(@RequestParam("token")String confirmationToken)
+    {
+        return userService.confirmEmail(confirmationToken);
     }
 
     @PostMapping("/login")
-    public String Login(@RequestBody Login login){
-        userService.login(login);
-        return "login successful";
+    public Response login(@RequestBody LoginDTO loginDTO){
+        return userService.login(loginDTO);
     }
 
-//    @PostMapping("/forgetPassword")
-//    public String forgotPassword(String password){
-//        String presentpassword=userService.forgotpassword(password);
-//        return presentpassword;
-//    }
-
     @PostMapping("/resetPassword/{id}")
-    public String resetPassword(@RequestBody RestPassword request,@PathVariable int id) throws Exception {
-        userService.resetpassword(request,id);
-        return "the password is been reset";
+    public Response resetPassword(@RequestBody RestPasswordDTO request, @PathVariable int id) throws Exception {
+        return iuSerService.resetpassword(request,id);
+    }
+
+    @PostMapping("/forgot-password/{id}")
+    public Response forgotPassword(@PathVariable int id) throws Exception
+    {
+        return userService.forgotPassword(id);
     }
 
     @GetMapping("/fetchAllUSer")
-    public List<User> getAll(){
-        return userService.getAllUser();
+    public List<AllUsers> getAll(){
+        return iuSerService.getAllUser();
     }
+
 
 
 

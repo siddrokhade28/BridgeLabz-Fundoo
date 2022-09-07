@@ -4,6 +4,7 @@ package com.BridgeLabz.FundooApp.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Entity(name = "users")
 public class User {
 
@@ -26,6 +28,11 @@ public class User {
     private String email;
     @Column(name = "Password",nullable = false,length = 80)
     private String password;
+    @Column(name = "Verified")
+    private boolean isVerified = false;
+
+//    @Column(name = "roles",nullable = false)
+//    private String role;
 
     @OneToMany(targetEntity = Notes.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "userID_FK",referencedColumnName ="User_id")

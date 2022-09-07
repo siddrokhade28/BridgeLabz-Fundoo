@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestPassword {
-    private String oldpassword;
-    private String newpasswrod;
+public class RestPasswordDTO {
+    private String oldPassword;
+    private String newPasswrod;
 
 }
