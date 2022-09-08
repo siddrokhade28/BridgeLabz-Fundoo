@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+/*
+Class to fetch the data from the query
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

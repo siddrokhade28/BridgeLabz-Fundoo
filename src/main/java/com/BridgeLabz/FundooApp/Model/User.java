@@ -30,9 +30,10 @@ public class User {
     private String password;
     @Column(name = "Verified")
     private boolean isVerified = false;
-
-//    @Column(name = "roles",nullable = false)
-//    private String role;
+    @Column(name = "Reset_Password_Token")
+    private String resetPasswordToken;
+    @Column(name = "Confirmation_Token")
+    private String confirmationToken;
 
     @OneToMany(targetEntity = Notes.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "userID_FK", referencedColumnName = "User_id")

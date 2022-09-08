@@ -4,23 +4,16 @@ package com.BridgeLabz.FundooApp.Security;
 import com.BridgeLabz.FundooApp.Model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @AllArgsConstructor
 public class CustomUserDeatils implements UserDetails {
 
-//    @Autowired
-//    private User user;
-
     private String username;
     private String password;
-    private List<GrantedAuthority> authorities;
 
 
     public CustomUserDeatils(User user) {

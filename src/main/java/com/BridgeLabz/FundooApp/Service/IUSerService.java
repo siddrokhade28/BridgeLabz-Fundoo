@@ -8,14 +8,20 @@ import com.BridgeLabz.FundooApp.Utility.Response;
 
 import java.util.List;
 
+// interface for User operation
+
 public interface IUSerService {
     public Response registration(RegisterDTO registerDTO);
 
-    public Response resetpassword(RestPasswordDTO restPasswordDTO, int id);
+    public Response resetpassword(RestPasswordDTO restPasswordDTO, String email);
 
-    public Response forgotPassword(int id);
+    public Response forgotPassword(String email);
 
     public List<AllUsers> getAllUser();
 
     Response login(LoginDTO loginDTO);
+
+    public String confirmEmail(String confirmationToken);
+
+    public Response resetPasswordByToken(RestPasswordDTO restPasswordDTO, String token);
 }

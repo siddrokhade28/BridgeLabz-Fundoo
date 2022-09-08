@@ -1,5 +1,8 @@
-package com.BridgeLabz.FundooApp.Utility;
+package com.BridgeLabz.FundooApp.MailConfiguration;
 
+/*
+mail sender config Interface
+ */
 public interface IMailSender {
 
     public void sendEmail(String from, String to);
