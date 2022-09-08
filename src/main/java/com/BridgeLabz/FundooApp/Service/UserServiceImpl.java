@@ -61,6 +61,7 @@ public class UserServiceImpl implements IUSerService {
     @Override
     @SneakyThrows
     public Response login(LoginDTO loginDTO) {
+        String token = jwtUtilService.generateToken(loginDTO.getEmail());
         if (userRepository.findByEmail(loginDTO.getEmail()).isPresent()) {
             User user = userRepository.findByEmail(loginDTO.getEmail()).get();
             if (user.isVerified() == true) {
@@ -71,7 +72,7 @@ public class UserServiceImpl implements IUSerService {
         } else {
             throw new ExceptionMessage("Invalid mail ID");
         }
-        return Utility.getResponse("Login Successful", HttpStatus.OK);
+        return Utility.getResponse("Login Successful", token);
     }
 
 
@@ -129,6 +130,7 @@ public class UserServiceImpl implements IUSerService {
         System.out.println(user);
         if (user.getConfirmationToken().equals(confirmationToken)) {
             user.setVerified(true);
+            user.setConfirmationToken(null);
             userRepository.save(user);
         } else {
             throw new ExceptionMessage("Not Verified ");
