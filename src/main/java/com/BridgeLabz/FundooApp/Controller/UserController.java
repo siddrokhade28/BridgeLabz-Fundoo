@@ -1,17 +1,11 @@
 package com.BridgeLabz.FundooApp.Controller;
 
-import com.BridgeLabz.FundooApp.DTO.AllUsers;
-import com.BridgeLabz.FundooApp.DTO.LoginDTO;
-import com.BridgeLabz.FundooApp.DTO.RegisterDTO;
-import com.BridgeLabz.FundooApp.DTO.RestPasswordDTO;
-import com.BridgeLabz.FundooApp.Model.Notes;
+import com.BridgeLabz.FundooApp.DTO.*;
 import com.BridgeLabz.FundooApp.Service.IUSerService;
 import com.BridgeLabz.FundooApp.Service.UserServiceImpl;
 import com.BridgeLabz.FundooApp.Utility.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +20,6 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
 
     /*
@@ -62,13 +54,6 @@ public class UserController {
         return userService.login(loginDTO);
     }
 
-    /*
-    API to reset password when forgotten
-     */
-    @PostMapping("/resetPasswordByToken")
-    public Response resetPasswordByToken(@RequestBody RestPasswordDTO restPasswordDTO, @RequestParam String token) throws Exception {
-        return iuSerService.resetPasswordByToken(restPasswordDTO, token);
-    }
 
     /*
     API to reset password
@@ -82,7 +67,7 @@ public class UserController {
     API when User forgets password
      */
     @PostMapping("/forgot-password")
-    public Response forgotPassword(@RequestParam String email) throws Exception {
+    public Response forgotPassword(@RequestParam ForgotPasswordDTO email) throws Exception {
         return userService.forgotPassword(email);
     }
 
@@ -90,7 +75,7 @@ public class UserController {
     API to Fetch All Users
      */
     @GetMapping("/fetchAllUSer")
-    public List<AllUsers> getAll() {
+    public List<FetchAllUsers> getAll() {
         return iuSerService.getAllUser();
     }
 

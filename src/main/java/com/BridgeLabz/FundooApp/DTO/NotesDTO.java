@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/*
-DTO Class for Forgot password
- */
+import java.util.List;
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForgotPasswordDTO {
-    private  String email;
+public class NotesDTO {
+    private String note;
 }

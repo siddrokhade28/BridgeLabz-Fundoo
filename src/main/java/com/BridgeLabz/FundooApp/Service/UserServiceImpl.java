@@ -1,11 +1,9 @@
 package com.BridgeLabz.FundooApp.Service;
 
-import com.BridgeLabz.FundooApp.DTO.AllUsers;
-import com.BridgeLabz.FundooApp.DTO.LoginDTO;
-import com.BridgeLabz.FundooApp.DTO.RegisterDTO;
-import com.BridgeLabz.FundooApp.DTO.RestPasswordDTO;
+import com.BridgeLabz.FundooApp.DTO.*;
 import com.BridgeLabz.FundooApp.Model.User;
 import com.BridgeLabz.FundooApp.Repository.UserRepository;
+import com.BridgeLabz.FundooApp.Security.CustomUserDeatilsService;
 import com.BridgeLabz.FundooApp.Security.Service.JwtUtilService;
 import com.BridgeLabz.FundooApp.Exception.ExceptionMessage;
 import com.BridgeLabz.FundooApp.MailConfiguration.MailSenderImpl;
@@ -16,9 +14,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 //Implementation of User Interface
@@ -34,8 +36,8 @@ public class UserServiceImpl implements IUSerService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private MailSenderImpl mailSender;
@@ -43,82 +45,94 @@ public class UserServiceImpl implements IUSerService {
     @Autowired
     private JwtUtilService jwtUtilService;
 
+    @Autowired
+    private HttpServletRequest httpServlet;
+
+    @Autowired
+    private CustomUserDeatilsService customUserDeatilsService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
     @Override
     @SneakyThrows
     public Response registration(RegisterDTO registerDTO) {
         userRepository.findByEmail(registerDTO.getEmail()).ifPresent(action -> {
             throw new ExceptionMessage("Email already registered");
         });
+
         User user = modelMapper.map(registerDTO, User.class);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        String JwtToken = jwtUtilService.generateToken(registerDTO.getEmail());
-        user.setConfirmationToken(JwtToken);
-        userRepository.save(user);
+        customUserDeatilsService.setEmail(registerDTO.getEmail());
+        customUserDeatilsService.setPassWord(registerDTO.getPassword());
+        System.out.println(customUserDeatilsService.getEmail());
+        System.out.println(customUserDeatilsService.getPassWord());
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        customUserDeatilsService.getEmail(),
+                        customUserDeatilsService.getPassWord()
+                )
+        );
+        UserDetails userDetails = customUserDeatilsService.loadUserByUsername(registerDTO.getEmail());
+        String JwtToken = jwtUtilService.generateToken(userDetails);
         mailSender.confirmMail(From, registerDTO.getEmail(), JwtToken);
+        userRepository.save(user);
         return Utility.getResponse("User registered sucessfullly", JwtToken);
     }
 
     @Override
     @SneakyThrows
     public Response login(LoginDTO loginDTO) {
-        String token = jwtUtilService.generateToken(loginDTO.getEmail());
         if (userRepository.findByEmail(loginDTO.getEmail()).isPresent()) {
             User user = userRepository.findByEmail(loginDTO.getEmail()).get();
             if (user.isVerified() == true) {
-                System.out.println("Login successful");
+                UserDetails userDetails = customUserDeatilsService.loadUserByUsername(loginDTO.getEmail());
+                String token = jwtUtilService.generateToken(userDetails);
+                return Utility.getResponse("Login Successful", token);
             } else {
                 throw new ExceptionMessage("User Email not verified");
             }
         } else {
             throw new ExceptionMessage("Invalid mail ID");
         }
-        return Utility.getResponse("Login Successful", token);
+
     }
 
 
     @Override
     public Response resetpassword(RestPasswordDTO restPasswordDTO, String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            User user = userRepository.findByEmail(email).get();
-            if (restPasswordDTO.getNewPasswrod().equals(restPasswordDTO.getConfirmPassword())) {
-                user.setPassword(restPasswordDTO.getConfirmPassword());
-                userRepository.save(user);
-                mailSender.sendEmail(From, user.getEmail());
+        String authorizationHeader = httpServlet.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String userName = jwtUtilService.extractUsername(jwt);
+        if (userRepository.findByEmail(email).get().getEmail().equals(userName)) {
+            if (userRepository.findByEmail(email).isPresent()) {
+                User user = userRepository.findByEmail(email).get();
+                if (restPasswordDTO.getNewPasswrod().equals(restPasswordDTO.getConfirmPassword())) {
+                    user.setPassword(restPasswordDTO.getConfirmPassword());
+                    userRepository.save(user);
+                    mailSender.sendEmail(From, user.getEmail());
+                } else {
+                    throw new ExceptionMessage("Passwords do not Match");
+                }
             } else {
-                throw new ExceptionMessage("Passwords do not Match");
+                throw new ExceptionMessage("Email Does not Exist");
             }
         } else {
-            throw new ExceptionMessage("Email Does not Exist");
+            throw new ExceptionMessage("Token not matching to the Email ");
         }
-        return Utility.getResponse("Login Successful", HttpStatus.OK);
+        return Utility.getResponse("Password has been reset", HttpStatus.OK);
     }
 
-    @Override
-    public Response resetPasswordByToken(RestPasswordDTO restPasswordDTO, String token) {
-        if (userRepository.findByResetPasswordToken(token).isPresent()) {
-            User user = userRepository.findByResetPasswordToken(token).get();
-            if (restPasswordDTO.getNewPasswrod().equals(restPasswordDTO.getConfirmPassword())) {
-                user.setPassword(passwordEncoder.encode(restPasswordDTO.getConfirmPassword()));
-                user.setResetPasswordToken(null);
-                userRepository.save(user);
-            } else {
-                throw new ExceptionMessage("Password do not match");
-            }
-        } else {
-            throw new ExceptionMessage("Invalid Token");
-        }
-        return Utility.getResponse("Password reset Successful", HttpStatus.OK);
-    }
 
     @Override
     @SneakyThrows
-    public Response forgotPassword(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            User user = userRepository.findByEmail(email).get();
-            String token = jwtUtilService.generateToken(email);
-            user.setResetPasswordToken(token);
-            userRepository.save(user);
-            mailSender.forgotPasswordMail(From, email, token);
+    public Response forgotPassword(ForgotPasswordDTO email) {
+        if (userRepository.findByEmail(email.getEmail()).isPresent()) {
+            User user = userRepository.findByEmail(email.getEmail()).get();
+            UserDetails userDetails = customUserDeatilsService.loadUserByUsername(email.getEmail());
+            String token = jwtUtilService.generateToken(userDetails);
+            mailSender.forgotPasswordMail(From, email.getEmail(), token);
         } else {
             throw new ExceptionMessage("Invalid Email ");
         }
@@ -126,21 +140,19 @@ public class UserServiceImpl implements IUSerService {
     }
 
     public String confirmEmail(String confirmationToken) {
-        User user = userRepository.findByConfirmationToken(confirmationToken).get();
-        System.out.println(user);
-        if (user.getConfirmationToken().equals(confirmationToken)) {
-            user.setVerified(true);
-            user.setConfirmationToken(null);
-            userRepository.save(user);
-        } else {
-            throw new ExceptionMessage("Not Verified ");
-        }
+        String username = jwtUtilService.extractUsername(confirmationToken);
+        userRepository.findByEmail(username).get().setVerified(true);
+        userRepository.save(userRepository.findByEmail(username).get());
+
         return "Verified Successfully";
     }
 
 
-    public List<AllUsers> getAllUser() {
-        return userRepository.FindAllUSer();
+    public List<FetchAllUsers> getAllUser() {
+        FetchAllUsers allUsers = modelMapper.map(userRepository.findAll(),FetchAllUsers.class);
+        List<FetchAllUsers> list = new ArrayList<>() ;
+        list.add(allUsers);
+        return list;
     }
 
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,12 +31,11 @@ public class User {
     private String password;
     @Column(name = "Verified")
     private boolean isVerified = false;
-    @Column(name = "Reset_Password_Token")
-    private String resetPasswordToken;
-    @Column(name = "Confirmation_Token")
-    private String confirmationToken;
 
     @OneToMany(targetEntity = Notes.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "userID_FK", referencedColumnName = "User_id")
     List<Notes> notes;
+
+
+
 }

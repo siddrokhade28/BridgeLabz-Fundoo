@@ -16,6 +16,8 @@ public class Notes {
     @Column(name = "Note_ID")
     private int note_id;
     @Column(name = "Notes", length = 8000)
-    private String notes;
+    private String note;
+    @Column(name = "Status")
+    private String status;
 
 }

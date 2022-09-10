@@ -1,5 +1,6 @@
 package com.BridgeLabz.FundooApp.Security;
 
+import com.BridgeLabz.FundooApp.Security.Filters.JwtFiltersRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -19,7 +21,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDeatilsService userDetailsService;
+
+    @Autowired
+    private JwtFiltersRequest jwtFiltersRequest;
 
     @Bean
     protected AuthenticationManager authenticationManager() throws Exception {
@@ -37,10 +42,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().disable();
-        http.csrf().disable();
+        http.
+                csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/user/homepage","/user/register","/user/login",
+                        "/user/confirm-email/**","/user/forgot-password",
+                        "/user/resetPasswordByToken")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/users").permitAll()
-                .and().formLogin().permitAll().and().logout().permitAll();
+        http.addFilterBefore(jwtFiltersRequest, UsernamePasswordAuthenticationFilter.class);
 
     }
 

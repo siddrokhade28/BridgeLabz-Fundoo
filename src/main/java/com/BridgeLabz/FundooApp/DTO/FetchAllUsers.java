@@ -10,8 +10,9 @@ Class to fetch the data from the query
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AllUsers {
+public class FetchAllUsers {
     private String firstName;
     private String lastName;
     private String email;
+    private boolean isVerified = false;
 }

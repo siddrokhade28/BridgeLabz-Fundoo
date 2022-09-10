@@ -1,37 +1,37 @@
 package com.BridgeLabz.FundooApp.Security;
 
 
-import com.BridgeLabz.FundooApp.DTO.RegisterDTO;
-import com.BridgeLabz.FundooApp.Model.User;
-import com.BridgeLabz.FundooApp.Repository.UserRepository;
-import com.BridgeLabz.FundooApp.Security.Service.JwtUtilService;
-import com.BridgeLabz.FundooApp.Utility.Response;
-import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.BridgeLabz.FundooApp.Exception.ExceptionMessage;
+import lombok.Data;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+
+import java.util.ArrayList;
 
 @Service
+@Data
 public class CustomUserDeatilsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
-   
+//    @Autowired
+//    private UserRepository userRepository;
+
+    private String email;
+    private String passWord;
+
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
-        return user.map(CustomUserDeatils::new).
-                orElseThrow(() -> new UsernameNotFoundException(email + " Email not registered"));
+    public UserDetails loadUserByUsername(String Email) throws UsernameNotFoundException {
+
+        if(Email.equals(email))
+        {
+            return new User(email,passWord,new ArrayList<>());
+        }
+        else
+        {
+            throw new ExceptionMessage("Invalid Credentials");
+        }
     }
-
-
-
 }
