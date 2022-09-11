@@ -36,9 +36,6 @@ public class UserServiceImpl implements IUSerService {
     @Autowired
     private ModelMapper modelMapper;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
-
     @Autowired
     private MailSenderImpl mailSender;
 
@@ -65,8 +62,6 @@ public class UserServiceImpl implements IUSerService {
         User user = modelMapper.map(registerDTO, User.class);
         customUserDeatilsService.setEmail(registerDTO.getEmail());
         customUserDeatilsService.setPassWord(registerDTO.getPassword());
-        System.out.println(customUserDeatilsService.getEmail());
-        System.out.println(customUserDeatilsService.getPassWord());
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -94,7 +89,7 @@ public class UserServiceImpl implements IUSerService {
                 throw new ExceptionMessage("User Email not verified");
             }
         } else {
-            throw new ExceptionMessage("Invalid mail ID");
+            throw new ExceptionMessage("Invalid Email or Password");
         }
 
     }
@@ -145,14 +140,6 @@ public class UserServiceImpl implements IUSerService {
         userRepository.save(userRepository.findByEmail(username).get());
 
         return "Verified Successfully";
-    }
-
-
-    public List<FetchAllUsers> getAllUser() {
-        FetchAllUsers allUsers = modelMapper.map(userRepository.findAll(),FetchAllUsers.class);
-        List<FetchAllUsers> list = new ArrayList<>() ;
-        list.add(allUsers);
-        return list;
     }
 
 

@@ -18,5 +18,6 @@ public interface INotesService {
 
     public Response archive(int note_id);
 
-    public Response unarchive(int note_id);
+    public Response trash(int note_id);
+    public Response pin(int note_id);
 }

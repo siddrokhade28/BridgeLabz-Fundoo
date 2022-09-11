@@ -13,8 +13,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
 
-
-//    @Query("select new com.BridgeLabz.FundooApp.DTO.AllUsers(u.firstName,u.lastName,u.email) from users u")
-//    List<AllUsers> FindAllUSer();
-
 }

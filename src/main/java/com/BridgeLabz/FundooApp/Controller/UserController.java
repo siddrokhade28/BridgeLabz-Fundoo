@@ -71,13 +71,4 @@ public class UserController {
         return userService.forgotPassword(email);
     }
 
-    /*
-    API to Fetch All Users
-     */
-    @GetMapping("/fetchAllUSer")
-    public List<FetchAllUsers> getAll() {
-        return iuSerService.getAllUser();
-    }
-
-
 }

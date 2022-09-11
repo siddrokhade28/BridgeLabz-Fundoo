@@ -14,8 +14,6 @@ public interface IUSerService {
 
     public Response forgotPassword(ForgotPasswordDTO email);
 
-    public List<FetchAllUsers> getAllUser();
-
     Response login(LoginDTO loginDTO);
 
     public String confirmEmail(String confirmationToken);
