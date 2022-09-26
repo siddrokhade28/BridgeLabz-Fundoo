@@ -79,8 +79,12 @@ public class UserServiceImpl implements IUSerService {
     @Override
     @SneakyThrows
     public Response login(LoginDTO loginDTO) {
-        if (userRepository.findByEmail(loginDTO.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(loginDTO.getEmail()).isPresent()
+                && userRepository.findByEmail(loginDTO.getEmail()).get()
+                .getPassword().equals(loginDTO.getPassword())) {
             User user = userRepository.findByEmail(loginDTO.getEmail()).get();
+            customUserDeatilsService.setEmail(loginDTO.getEmail());
+            customUserDeatilsService.setPassWord(loginDTO.getPassword());
             if (user.isVerified() == true) {
                 UserDetails userDetails = customUserDeatilsService.loadUserByUsername(loginDTO.getEmail());
                 String token = jwtUtilService.generateToken(userDetails);
