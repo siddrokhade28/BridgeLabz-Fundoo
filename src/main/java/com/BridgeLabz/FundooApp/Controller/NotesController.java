@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/notes")
+@CrossOrigin(origins = "http://localhost:3000")
 public class NotesController {
 
     @Autowired

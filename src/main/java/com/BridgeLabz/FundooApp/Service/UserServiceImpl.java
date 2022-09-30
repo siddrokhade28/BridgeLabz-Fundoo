@@ -100,13 +100,13 @@ public class UserServiceImpl implements IUSerService {
 
 
     @Override
-    public Response resetpassword(RestPasswordDTO restPasswordDTO, String email) {
+    public Response resetpassword(RestPasswordDTO restPasswordDTO) {
         String authorizationHeader = httpServlet.getHeader("Authorization");
         String jwt = authorizationHeader.substring(7);
         String userName = jwtUtilService.extractUsername(jwt);
-        if (userRepository.findByEmail(email).get().getEmail().equals(userName)) {
-            if (userRepository.findByEmail(email).isPresent()) {
-                User user = userRepository.findByEmail(email).get();
+        if (userRepository.findByEmail(userName).get().getEmail().equals(userName)) {
+            if (userRepository.findByEmail(userName).isPresent()) {
+                User user = userRepository.findByEmail(userName).get();
                 if (restPasswordDTO.getNewPasswrod().equals(restPasswordDTO.getConfirmPassword())) {
                     user.setPassword(restPasswordDTO.getConfirmPassword());
                     userRepository.save(user);
@@ -129,13 +129,15 @@ public class UserServiceImpl implements IUSerService {
     public Response forgotPassword(ForgotPasswordDTO email) {
         if (userRepository.findByEmail(email.getEmail()).isPresent()) {
             User user = userRepository.findByEmail(email.getEmail()).get();
+            customUserDeatilsService.setEmail(email.getEmail());
             UserDetails userDetails = customUserDeatilsService.loadUserByUsername(email.getEmail());
             String token = jwtUtilService.generateToken(userDetails);
             mailSender.forgotPasswordMail(From, email.getEmail(), token);
+            return Utility.getResponse("generated password has been sent to your Email",token );
         } else {
             throw new ExceptionMessage("Invalid Email ");
         }
-        return Utility.getResponse("generated password has been sent to your Email", HttpStatus.OK);
+
     }
 
     public String confirmEmail(String confirmationToken) {

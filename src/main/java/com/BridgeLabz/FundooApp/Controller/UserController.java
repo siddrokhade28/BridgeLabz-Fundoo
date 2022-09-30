@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -59,15 +60,15 @@ public class UserController {
     API to reset password
      */
     @PostMapping("/resetPassword")
-    public Response resetPassword(@RequestBody RestPasswordDTO restPasswordDTO, @RequestParam String email) throws Exception {
-        return iuSerService.resetpassword(restPasswordDTO, email);
+    public Response resetPassword(@RequestBody RestPasswordDTO restPasswordDTO) throws Exception {
+        return iuSerService.resetpassword(restPasswordDTO);
     }
 
     /*
     API when User forgets password
      */
     @PostMapping("/forgot-password")
-    public Response forgotPassword(@RequestParam ForgotPasswordDTO email) throws Exception {
+    public Response forgotPassword(@RequestParam (name = "email")ForgotPasswordDTO email ) throws Exception{
         return userService.forgotPassword(email);
     }
 

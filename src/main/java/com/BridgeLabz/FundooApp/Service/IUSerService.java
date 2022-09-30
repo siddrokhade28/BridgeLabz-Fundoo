@@ -10,7 +10,7 @@ import java.util.List;
 public interface IUSerService {
     public Response registration(RegisterDTO registerDTO);
 
-    public Response resetpassword(RestPasswordDTO restPasswordDTO, String email);
+    public Response resetpassword(RestPasswordDTO restPasswordDTO);
 
     public Response forgotPassword(ForgotPasswordDTO email);
 
