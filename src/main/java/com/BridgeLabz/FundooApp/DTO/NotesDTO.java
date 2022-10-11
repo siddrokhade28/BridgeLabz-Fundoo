@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotesDTO {
-    private String note;
+    private String title;
+    private String description;
 }

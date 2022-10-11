@@ -20,4 +20,6 @@ public interface INotesService {
 
     public Response trash(int note_id);
     public Response pin(int note_id);
+
+
 }

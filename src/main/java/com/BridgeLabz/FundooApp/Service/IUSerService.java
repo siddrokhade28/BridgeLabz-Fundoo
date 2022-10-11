@@ -18,4 +18,6 @@ public interface IUSerService {
 
     public String confirmEmail(String confirmationToken);
 
+
+
 }

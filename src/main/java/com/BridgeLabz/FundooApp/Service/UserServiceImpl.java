@@ -20,8 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+
 
 //Implementation of User Interface
 @Service
@@ -88,7 +87,8 @@ public class UserServiceImpl implements IUSerService {
             if (user.isVerified() == true) {
                 UserDetails userDetails = customUserDeatilsService.loadUserByUsername(loginDTO.getEmail());
                 String token = jwtUtilService.generateToken(userDetails);
-                return Utility.getResponse("Login Successful", token);
+                int userid = user.getId();
+                return Utility.getResponse(token, userid);
             } else {
                 throw new ExceptionMessage("User Email not verified");
             }
@@ -147,6 +147,5 @@ public class UserServiceImpl implements IUSerService {
 
         return "Verified Successfully";
     }
-
 
 }

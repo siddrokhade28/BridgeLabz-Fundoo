@@ -53,7 +53,7 @@ public class NotesServiceImpl implements INotesService {
         if (userRepository.findById(id).isPresent()) {
             if (noteRepository.findById(note_id).isPresent()) {
                 Notes note = noteRepository.findById(note_id).get();
-                note.setNote(noteBody.getNote());
+                note.setTitle(noteBody.getTitle());
                 noteRepository.save(note);
             } else {
                 throw new ExceptionMessage("Note ID not found");
@@ -92,7 +92,7 @@ public class NotesServiceImpl implements INotesService {
         {
             throw new ExceptionMessage("Invalid User Id");
         }
-        return new Response("User Id : "+ user_id , noteRepository.findAll());
+        return new Response("User Id : "+ user_id , userNotes);
     }
 
     //To Archive/UnArchive A note

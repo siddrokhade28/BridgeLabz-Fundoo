@@ -22,6 +22,8 @@ public class NotesController {
         return notesServiceImpl.AddNote(notes, user_id);
     }
 
+
+
     //APi to update a Present Note
     @PutMapping("/update/{user_id}/{note_id}")
     public Response updateNote(@PathVariable int user_id, @PathVariable int note_id, @RequestBody Notes notes) {
