@@ -54,6 +54,7 @@ public class NotesServiceImpl implements INotesService {
             if (noteRepository.findById(note_id).isPresent()) {
                 Notes note = noteRepository.findById(note_id).get();
                 note.setTitle(noteBody.getTitle());
+                note.setDescription(noteBody.getDescription());
                 noteRepository.save(note);
             } else {
                 throw new ExceptionMessage("Note ID not found");

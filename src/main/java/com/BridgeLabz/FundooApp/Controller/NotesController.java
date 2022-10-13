@@ -27,7 +27,6 @@ public class NotesController {
     //APi to update a Present Note
     @PutMapping("/update/{user_id}/{note_id}")
     public Response updateNote(@PathVariable int user_id, @PathVariable int note_id, @RequestBody Notes notes) {
-        //TODO: create a note DTO;
         return notesServiceImpl.updateNote(user_id, note_id, notes);
     }
 
